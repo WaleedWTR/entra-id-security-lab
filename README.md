@@ -1,5 +1,7 @@
 # Entra ID Security Lab
 
+![Policy tests](https://github.com/WaleedWTR/entra-id-security-lab/actions/workflows/tests.yml/badge.svg)
+
 A portfolio identity-security lab focused on Microsoft Entra ID governance, Conditional Access design, privileged access thinking and sign-in investigation.
 
 > **Portfolio note:** This repository uses synthetic identities, documentation ranges and policy specifications. It contains no tenant, employer or production information.
@@ -48,6 +50,14 @@ Users / Admins / Workloads
 ## Policy approach
 
 The JSON files under `policies/` are **portfolio policy specifications**, not export files intended for direct production import. They make the control intent reviewable without embedding a real tenant configuration.
+
+## Key documentation
+
+- [Identity hardening baseline](docs/identity-hardening.md)
+- [Emergency-access design](docs/emergency-access.md)
+- [Conditional Access portfolio specification](policies/conditional-access-baseline.json)
+- [Sign-in hunting queries](kql/signin-hunting.kql)
+- [Technical references](docs/references.md)
 
 ## Skills demonstrated
 
