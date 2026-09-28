@@ -1,0 +1,52 @@
+{
+  "name": "Portfolio Conditional Access Baseline",
+  "version": "1.0",
+  "policies": [
+    {
+      "id": "CA-001",
+      "displayName": "Require MFA for administrators",
+      "state": "reportOnly",
+      "scope": {
+        "personas": ["privileged-administrators"],
+        "exclusions": ["emergency-access-accounts"]
+      },
+      "conditions": {
+        "applications": ["all-cloud-apps"]
+      },
+      "grant": {
+        "requireMfa": true
+      }
+    },
+    {
+      "id": "CA-002",
+      "displayName": "Block legacy authentication",
+      "state": "reportOnly",
+      "scope": {
+        "personas": ["all-users"],
+        "exclusions": ["approved-exception-group"]
+      },
+      "conditions": {
+        "clientApps": ["legacy-authentication"]
+      },
+      "grant": {
+        "block": true
+      }
+    },
+    {
+      "id": "CA-003",
+      "displayName": "Require compliant device for privileged access",
+      "state": "reportOnly",
+      "scope": {
+        "personas": ["privileged-administrators"],
+        "exclusions": ["emergency-access-accounts"]
+      },
+      "conditions": {
+        "applications": ["administrative-portals"]
+      },
+      "grant": {
+        "requireCompliantDevice": true,
+        "requireMfa": true
+      }
+    }
+  ]
+}
