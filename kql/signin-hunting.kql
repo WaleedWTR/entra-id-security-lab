@@ -1,0 +1,37 @@
+// High-volume failed sign-ins by source IP
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ResultType != 0
+| summarize Failures=count(), Users=dcount(UserPrincipalName),
+    UserList=make_set(UserPrincipalName, 20) by IPAddress
+| where Failures >= 20 or Users >= 5
+| order by Failures desc;
+
+// Successful sign-ins after repeated failures
+let failures =
+    SigninLogs
+    | where TimeGenerated > ago(24h)
+    | where ResultType != 0
+    | summarize FailedAttempts=count(), FirstFailure=min(TimeGenerated),
+        LastFailure=max(TimeGenerated) by UserPrincipalName, IPAddress
+    | where FailedAttempts >= 5;
+let successes =
+    SigninLogs
+    | where TimeGenerated > ago(24h)
+    | where ResultType == 0
+    | summarize SuccessTime=min(TimeGenerated) by UserPrincipalName, IPAddress;
+failures
+| join kind=inner successes on UserPrincipalName, IPAddress
+| where SuccessTime between (FirstFailure .. LastFailure + 30m)
+| project UserPrincipalName, IPAddress, FailedAttempts,
+          FirstFailure, LastFailure, SuccessTime;
+
+// Conditional Access failures for investigation
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ConditionalAccessStatus =~ "failure"
+| summarize Events=count(),
+    Apps=make_set(AppDisplayName, 20),
+    IPs=make_set(IPAddress, 20)
+    by UserPrincipalName
+| order by Events desc;
